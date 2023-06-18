@@ -46,38 +46,25 @@
             </button>
        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
               <script>
-                document.getElementById('rzp-button1').onclick = async function(e){
+                   axios.post('/order').then((info)=>{
+                         var options = {
+                                "key": "rzp_test_6rssfN0bqls1V2", 
+                                "currency": "INR",
+                                "name":"Test",
+                                "description":"Test transaction",
+                                "order_id": info.data.id, 
+                                "handler": function (response){
+                                    alert(response.razorpay_payment_id);
+                                    alert(response.razorpay_order_id);
+                                    alert(response.razorpay_signature)
+                                };
+                         };
+                var rzp1 = new Razorpay(options);
+                document.getElementById('rzp-button1').onclick = function(e){
+                    rzp1.open();
                     e.preventDefault();
-                    let response = await fetch("https://payment-gateway-6112.onrender.com/payment",{
-                      method:"POST",
-                      headers:{
-                        "Content-type":"application/json"
-                      },
-                      body :JSON.stringify({
-                        amount:500
-                      })
-                    });
-
-                    let orderData = await response.json();
-                    console.log(orderData);
-                    
-
-                var options = {
-                  "key": "rzp_test_6rssfN0bqls1V2", // Enter the Key ID generated from the Dashboard
-                  "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                  "currency": "INR",
-                
-                  "order_id": orderData.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                  "handler": function (response){
-                      alert(response.razorpay_payment_id);
-                      alert(response.razorpay_order_id);
-                      alert(response.razorpay_signature)
-                  },
-                  };
-                  var rzp1 = new Razorpay(options);
-                  rzp1.open();
-            };
-            
+                }
+                })                                
           </script>
     </div>
   </div><!-- /.container -->
